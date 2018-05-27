@@ -1,27 +1,40 @@
 # ServerlessServerSideRenderingAngular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.4.
+A demo of [Angular Universal Rendering](https://github.com/angular/angular-cli/wiki/stories-universal-rendering) a.k.a Server-Side Rendering(SSR) with [aws-serverless-express](https://github.com/awslabs/aws-serverless-express) 
 
-## Development server
+## Local
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+npm run build:ssr && npm run serve:ssr
+```
 
-## Code scaffolding
+Open http://localhost:4000, SSR is work.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Serverless
 
-## Build
+### Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Build to dist-lamnda directory.
 
-## Running unit tests
+```
+npm run build:ssr:lambda
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Setup
 
-## Running end-to-end tests
+This guide assumes you have already set up an AWS account and have the latest version of the AWS CLI installed.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+1. Run npm run config -- --account-id="<accountId>" --bucket-name="<bucketName>" [--region="<region>" --function-name="<functionName>"] to configure the example, eg. npm run config -- --account-id="123456789012" --bucket-name="my-unique-bucket". This modifies package.json, simple-proxy-api.yaml and cloudformation.yaml with your account ID, bucket, region and function name (region defaults to us-east-1 and function name defaults to AwsServerlessExpressFunction). If the bucket you specify does not yet exist, the next step will create it for you. This step modifies the existing files in-place; if you wish to make changes to these settings, you will need to modify package.json, simple-proxy-api.yaml and cloudformation.yaml manually.
+2. Run npm run setup (Windows users: npm run win-setup) - this installs the node dependencies, creates an S3 bucket (if it does not already exist), packages and deploys your serverless Express application to AWS Lambda, and creates an API Gateway proxy API.
+3. After the setup command completes, open the AWS CloudFormation console https://console.aws.amazon.com/cloudformation/home and switch to the region you specified. Select the AwsServerlessExpressStack stack, then click the ApiUrl value under the Outputs section - this will open a new page with your running API. The API index lists the resources available in the example Express server (app.js), along with example curl commands.
 
-## Further help
+More detail is [steps for running the example](https://github.com/awslabs/aws-serverless-express/tree/master/example#steps-for-running-the-example)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Deploy
+
+When update angular app, run build for serverless and deploy to AWS.
+
+```
+npm run build:ssr:lambda
+npm run package-deploy
+```
